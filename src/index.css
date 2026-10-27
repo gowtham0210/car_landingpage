@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #060606;
+  --burnt: #d2581c;
+  --copper: #c07a4a;
+  --bone: #ece8e0;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { background: var(--ink); -webkit-text-size-adjust: 100%; }
+html.is-loading, html.is-loading body { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: 'Archivo Variable', Archivo, system-ui, sans-serif;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+img, video { display: block; max-width: 100%; }
+::selection { background: var(--burnt); color: var(--ink); }
+
+/* Typographic system ------------------------------------------------ */
+@layer components {
+  .t-display {
+    font-weight: 800;
+    font-stretch: 112%;
+    letter-spacing: -0.025em;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+  .t-wide { font-stretch: 125%; }
+  .t-cond { font-stretch: 62%; font-weight: 700; letter-spacing: -0.01em; line-height: 0.86; }
+  .t-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .t-body { font-size: clamp(15px, 1.05vw, 17px); line-height: 1.65; color: #b4b2ae; max-width: 46ch; }
+  .rule { height: 1px; background: rgba(255, 255, 255, 0.14); }
+
+  /* Line mask used by the reveal system */
+  .line-mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+  .line-mask > span { display: block; will-change: transform; }
+
+  .focus-ring { @apply outline-none focus-visible:ring-2 focus-visible:ring-burnt focus-visible:ring-offset-2 focus-visible:ring-offset-ink; }
+}
+
+/* A cover-fit box that keeps an image's native aspect ratio inside any container.
+   Overlays placed inside share the image's coordinate space. */
+.cq { container-type: size; }
+.cover-anchor {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  width: max(100cqw, calc(100cqh * var(--r)));
+  aspect-ratio: var(--r);
+  transform: translate(-50%, -50%);
+}
+
+/* Film grain – cheap, static, hides upscaling softness */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Hide scrollbar on horizontal galleries */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+@keyframes pulse-line { 0%, 100% { transform: scaleY(0.35); opacity: .5 } 50% { transform: scaleY(1); opacity: 1 } }
+@keyframes drift { 0% { transform: translate3d(0,0,0) } 100% { transform: translate3d(-2.5%, -1%, 0) } }
